@@ -27,10 +27,14 @@ def most_common_word(text: str) -> tuple[str, int]:
 
 
 def reading_time(text: str) -> str:
-    """Estimate reading time at standard 200 WPM."""
-    wpm = 200
-    minutes = math.ceil(count_words(text) / wpm) if count_words(text) > 0 else 0
-    return f"{minutes} min (at {wpm} WPM)"
+    """Estimate reading time on content words (excluding stopwords) at 180 and 250 WPM."""
+    stopwords = {"the", "a", "an", "is", "to", "and", "of", "in"}
+    words = [w for w in re.findall(r"\b\w+\b", text.lower()) if w not in stopwords]
+    if not words:
+        return "0 sec"
+    minutes = math.ceil(len(words) / 180)
+    fast_seconds = math.ceil((len(words) / 250) * 60)
+    return f"{minutes} min at 180 WPM / {fast_seconds} sec fast mode at 250 WPM"
 
 
 def analyze(text: str) -> None:
